@@ -467,8 +467,15 @@ namespace Rebus.Bus
             if (desiredNumberOfWorkers == GetNumberOfWorkers()) return;
 
             _log.Info("Setting number of workers to {0}", desiredNumberOfWorkers);
-            while (desiredNumberOfWorkers > GetNumberOfWorkers()) AddWorker();
-            while (desiredNumberOfWorkers < GetNumberOfWorkers()) RemoveWorker();
+            while (desiredNumberOfWorkers > GetNumberOfWorkers())
+            {
+                AddWorker();
+            }
+
+            if (desiredNumberOfWorkers < GetNumberOfWorkers())
+            {
+                RemoveWorkers(desiredNumberOfWorkers);
+            }
         }
 
         int GetNumberOfWorkers()
@@ -499,18 +506,26 @@ namespace Rebus.Bus
             }
         }
 
-        void RemoveWorker()
+        void RemoveWorkers(int desiredNumberOfWorkers)
         {
             lock (_workers)
             {
                 if (_workers.Count == 0) return;
 
-                using (var lastWorker = _workers.Last())
-                {
-                    _log.Debug("Removing worker {0}", lastWorker.Name);
+                var removedWorkers = new List<IWorker>();
 
+                while (_workers.Count > desiredNumberOfWorkers)
+                {
+                    var lastWorker = _workers.Last();
+                    _log.Debug("Removing worker {0}", lastWorker.Name);
+                    removedWorkers.Add(lastWorker);
                     _workers.Remove(lastWorker);
                 }
+
+                removedWorkers.ForEach(w => w.Stop());
+
+                // this one will block until all workers have stopped
+                removedWorkers.ForEach(w => w.Dispose());
             }
         }
 

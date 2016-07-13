@@ -202,6 +202,7 @@
     <Compile Include="Transport\Msmq\MsmqShutdownTime.cs" />
     <Compile Include="Transport\Msmq\MsmqMessageExpiration.cs" />
     <Compile Include="Transport\Msmq\MsmqTransportFactory.cs" />
+    <Compile Include="Transport\Msmq\RealisticMsmqScenario.cs" />
     <Compile Include="Transport\Msmq\TestMsmqDiskUsage.cs" />
     <Compile Include="Transport\Msmq\TestMsmqMangledMessage.cs" />
     <Compile Include="Transport\Msmq\TestMsmqTransportMachineAddressing.cs" />

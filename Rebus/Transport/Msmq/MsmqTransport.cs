@@ -170,6 +170,15 @@ namespace Rebus.Transport.Msmq
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public static long NumberOfReceiveExceptions;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static long NumberOfEmptyMessages;
+
+        /// <summary>
         /// Received the next available transport message from the input queue via MSMQ. Will create a new <see cref="MessageQueueTransaction"/> and stash
         /// it under the <see cref="CurrentTransactionKey"/> key in the given <paramref name="context"/>. If one already exists, an exception will be thrown
         /// (because we should never have to receive multiple messages in the same transaction)
@@ -189,6 +198,15 @@ namespace Rebus.Transport.Msmq
                 throw new InvalidOperationException("Tried to receive with an already existing MSMQ queue transaction - while that is possible, it's an indication that something is wrong!");
             }
 
+            var receiveTask = Task.Factory.FromAsync(queue.BeginPeek(TimeSpan.FromSeconds(1)), result => queue.EndPeek(result));
+
+            await receiveTask;
+
+            if (!receiveTask.IsCompleted)
+            {
+                return null;
+            }
+
             var messageQueueTransaction = new MessageQueueTransaction();
             messageQueueTransaction.Begin();
 
@@ -202,6 +220,7 @@ namespace Rebus.Transport.Msmq
                 if (message == null)
                 {
                     messageQueueTransaction.Abort();
+                    Interlocked.Increment(ref NumberOfEmptyMessages);
                     return null;
                 }
 
@@ -219,6 +238,7 @@ namespace Rebus.Transport.Msmq
             {
                 if (exception.MessageQueueErrorCode == MessageQueueErrorCode.IOTimeout)
                 {
+                    Interlocked.Increment(ref NumberOfReceiveExceptions);
                     return null;
                 }
 
