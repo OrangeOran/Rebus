@@ -1003,6 +1003,14 @@
 * Added ability to skip encryption of a particular message by adding the `rbs2-disable-encryption` header (can be found as a constant in `EncryptionHeaders.DisableEncryptionHeader`)
 * Provide real `Exception`s in `IFailed<TMessage>`
 
+# 0.99.68
+
+* Provide optional Jil configuration `Options` parameter, allowing for customizing serialization settings - thanks [Rzpeg]
+* Make RabbitMQ transport accept multiple connection strings separated by , or ; which will then be cycled on connection failures
+* Fix very subtle bug in saga persisters that would result in sometimes loading saga data of the wrong type when having multiple saga handlers with different saga data types in the same endpoint, handling the same message, correlating by ID - affected persisters: Azure Storage, SQL Server, PostgreSQL, RavenDB, File System
+* Fix subtle bug in how the ambient transaction context is picked up that would sometimes (when another bus is used from withing a message handler, and only with some transports) result in ending up doing `Send` on the other bus' transport
+
+
 ---
 
 [AndreaCuneo]: https://github.com/AndreaCuneo
@@ -1037,6 +1045,7 @@
 [PeteProgrammer]: https://github.com/PeteProgrammer
 [pruiz]: https://github.com/pruiz
 [puzsol]: https://github.com/puzsol
+[runes83]: https://github.com/runes83
 [Rzpeg]: https://github.com/Rzpeg
 [seankearon]: https://github.com/seankearon
 [SvenVandenbrande]: https://github.com/SvenVandenbrande

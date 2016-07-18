@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sagas\BasicLoadAndSaveAndFindOperations.cs" />
+    <Compile Include="Sagas\PostgreSqlBasicLoadAndSaveAndFindOperations.cs" />
     <Compile Include="Sagas\ConcurrencyHandling.cs" />
     <Compile Include="Sagas\PostgreSqlSagaSnapshotTest.cs" />
     <Compile Include="Sagas\PostgreSqlSagaStorageFactory.cs" />
