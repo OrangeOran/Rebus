@@ -200,9 +200,17 @@ namespace Rebus.Transport.Msmq
 
             var receiveTask = Task.Factory.FromAsync(queue.BeginPeek(TimeSpan.FromSeconds(1)), result => queue.EndPeek(result));
 
-            await receiveTask;
+            try
+            {
+                await receiveTask;
 
-            if (!receiveTask.IsCompleted)
+                if (!receiveTask.IsCompleted)
+                {
+                    return null;
+                }
+            }
+            catch (MessageQueueException exception)
+                when (exception.MessageQueueErrorCode == MessageQueueErrorCode.IOTimeout)
             {
                 return null;
             }
