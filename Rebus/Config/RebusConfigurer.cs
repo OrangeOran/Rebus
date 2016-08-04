@@ -160,26 +160,26 @@ namespace Rebus.Config
 
             PossiblyRegisterDefault<IBackoffStrategy>(c => new SimpleConstantPollingBackoffStrategy());
 
-            PossiblyRegisterDefault<IWorkerFactory>(c =>
-            {
-                var transport = c.Get<ITransport>();
-                var pipeline = c.Get<IPipeline>();
-                var pipelineInvoker = c.Get<IPipelineInvoker>();
-                var backoffStrategy = c.Get<IBackoffStrategy>();
-                var rebusLoggerFactory = c.Get<IRebusLoggerFactory>();
-                return new ThreadWorkerFactory(transport, pipeline, pipelineInvoker, backoffStrategy, rebusLoggerFactory, _options, c.Get<RebusBus>);
-            });
-
             //PossiblyRegisterDefault<IWorkerFactory>(c =>
             //{
             //    var transport = c.Get<ITransport>();
-            //    var rebusLoggerFactory = c.Get<IRebusLoggerFactory>();
             //    var pipeline = c.Get<IPipeline>();
             //    var pipelineInvoker = c.Get<IPipelineInvoker>();
-            //    var options = c.Get<Options>();
-            //    var busLifetimeEvents = c.Get<BusLifetimeEvents>();
-            //    return new ThreadPoolWorkerFactory(transport, rebusLoggerFactory, pipeline, pipelineInvoker, options, c.Get<RebusBus>, busLifetimeEvents);
+            //    var backoffStrategy = c.Get<IBackoffStrategy>();
+            //    var rebusLoggerFactory = c.Get<IRebusLoggerFactory>();
+            //    return new ThreadWorkerFactory(transport, pipeline, pipelineInvoker, backoffStrategy, rebusLoggerFactory, _options, c.Get<RebusBus>);
             //});
+
+            PossiblyRegisterDefault<IWorkerFactory>(c =>
+            {
+                var transport = c.Get<ITransport>();
+                var rebusLoggerFactory = c.Get<IRebusLoggerFactory>();
+                var pipeline = c.Get<IPipeline>();
+                var pipelineInvoker = c.Get<IPipelineInvoker>();
+                var options = c.Get<Options>();
+                var busLifetimeEvents = c.Get<BusLifetimeEvents>();
+                return new ThreadPoolWorkerFactory(transport, rebusLoggerFactory, pipeline, pipelineInvoker, options, c.Get<RebusBus>, busLifetimeEvents);
+            });
 
             PossiblyRegisterDefault<IErrorTracker>(c =>
             {
